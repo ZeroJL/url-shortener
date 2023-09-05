@@ -1,5 +1,6 @@
-package com.clone.urlshortener.service;
+package com.clone.urlshortener.codec;
 
+import com.clone.urlshortener.sequencer.Sequencer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

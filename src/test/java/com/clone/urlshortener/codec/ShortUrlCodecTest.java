@@ -1,4 +1,4 @@
-package com.clone.urlshortener.service;
+package com.clone.urlshortener.codec;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,16 +1,14 @@
-package com.clone.urlshortener.model;
+package com.clone.urlshortener.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.util.Calendar;
 import java.util.Date;
 
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Document("collection = url_pair")

@@ -1,4 +1,4 @@
-package com.clone.urlshortener.service;
+package com.clone.urlshortener.sequencer;
 
 import org.springframework.stereotype.Service;
 

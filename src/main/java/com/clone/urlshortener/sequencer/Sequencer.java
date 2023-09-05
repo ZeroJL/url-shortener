@@ -1,4 +1,4 @@
-package com.clone.urlshortener.service;
+package com.clone.urlshortener.sequencer;
 
 public interface Sequencer {
 

@@ -1,7 +1,9 @@
-package com.clone.urlshortener.service;
+package com.clone.urlshortener.domain.service;
 
-import com.clone.urlshortener.model.URLPair;
-import com.clone.urlshortener.repository.URLPairRepository;
+import com.clone.urlshortener.codec.CodecStrategy;
+import com.clone.urlshortener.domain.model.URLPair;
+import com.clone.urlshortener.codec.ShortUrlCodec;
+import com.clone.urlshortener.infrastructure.repository.mongo.URLPairRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,9 +43,9 @@ class URLManagerTest {
         String longUrl = "https://example.com";
 
         when(urlPairRepository.findURLPairByLongUrl(longUrl)).thenReturn(Optional.empty());
-
+        when(shortUrlCodec.encode(CodecStrategy.BASE_58)).thenReturn("hello");
         String result = urlManager.getShortUrl(longUrl);
-        Assertions.assertThat(result).isEqualTo("hello");
+        Assertions.assertThat(result).isEqualTo("/shorten-url/hello");
 
         verify(urlPairRepository).save(any(URLPair.class));
     }

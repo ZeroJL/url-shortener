@@ -1,4 +1,4 @@
-package com.clone.urlshortener.dto;
+package com.clone.urlshortener.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

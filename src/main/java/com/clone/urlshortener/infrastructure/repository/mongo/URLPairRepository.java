@@ -1,6 +1,6 @@
-package com.clone.urlshortener.repository;
+package com.clone.urlshortener.infrastructure.repository.mongo;
 
-import com.clone.urlshortener.model.URLPair;
+import com.clone.urlshortener.domain.model.URLPair;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

@@ -1,8 +1,8 @@
-package com.clone.urlshortener.controller;
+package com.clone.urlshortener.api.controller;
 
-import com.clone.urlshortener.dto.URLShortenRequest;
-import com.clone.urlshortener.dto.URLShortenResponse;
-import com.clone.urlshortener.service.URLManager;
+import com.clone.urlshortener.api.dto.URLShortenRequest;
+import com.clone.urlshortener.api.dto.URLShortenResponse;
+import com.clone.urlshortener.domain.service.URLManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

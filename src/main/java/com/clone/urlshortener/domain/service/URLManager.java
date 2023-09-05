@@ -1,11 +1,11 @@
-package com.clone.urlshortener.service;
+package com.clone.urlshortener.domain.service;
 
-import com.clone.urlshortener.model.URLPair;
-import com.clone.urlshortener.repository.URLPairRepository;
+import com.clone.urlshortener.codec.CodecStrategy;
+import com.clone.urlshortener.codec.ShortUrlCodec;
+import com.clone.urlshortener.domain.model.URLPair;
+import com.clone.urlshortener.infrastructure.repository.mongo.URLPairRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import static com.clone.urlshortener.service.CodecStrategy.BASE_58;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class URLManager {
     }
 
     private String generateShortUrl() {
-        return "/shorten-url" + shortUrlCodec.encode(BASE_58);
+        return "/shorten-url/" + shortUrlCodec.encode(CodecStrategy.BASE_58);
     }
 
 
