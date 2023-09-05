@@ -1,5 +1,8 @@
 package com.clone.urlshortener.service;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Base10To58Strategy implements CodecStrategy {
     private static final String BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 

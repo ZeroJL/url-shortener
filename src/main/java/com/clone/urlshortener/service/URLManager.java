@@ -5,6 +5,8 @@ import com.clone.urlshortener.repository.URLPairRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static com.clone.urlshortener.service.CodecStrategy.BASE_58;
+
 @Service
 @RequiredArgsConstructor
 public class URLManager {
@@ -26,7 +28,7 @@ public class URLManager {
     }
 
     private String generateShortUrl() {
-        return "/shorten-url" + shortUrlCodec.encode();
+        return "/shorten-url" + shortUrlCodec.encode(BASE_58);
     }
 
 
