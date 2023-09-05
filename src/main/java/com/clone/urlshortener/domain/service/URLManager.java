@@ -13,6 +13,7 @@ public class URLManager {
 
     private final URLPairRepository urlPairRepository;
     private final ShortUrlCodec shortUrlCodec;
+    private static final String PREFIX_URL = "/shorten-url/";
 
     public String getShortUrl(String longUrl) {
         URLPair urlPair = urlPairRepository.findURLPairByLongUrl(longUrl).orElseGet(() -> generateAndSaveUrlPair(longUrl));
@@ -28,7 +29,7 @@ public class URLManager {
     }
 
     private String generateShortUrl() {
-        return "/shorten-url/" + shortUrlCodec.encode(CodecStrategy.BASE_58);
+        return PREFIX_URL + shortUrlCodec.encode(CodecStrategy.BASE_58);
     }
 
 
