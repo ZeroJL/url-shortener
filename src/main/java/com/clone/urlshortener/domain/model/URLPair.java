@@ -3,7 +3,9 @@ package com.clone.urlshortener.domain.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Calendar;
@@ -16,12 +18,18 @@ public class URLPair {
 
     @Id
     private String longUrl;
-    @Getter
+    @Getter @Setter
     private String shortUrl;
     private Date expiration;
+    @Version
+    private Long version;
+
+    public URLPair(String longUrl) {
+        this(longUrl, "", getDefaultExpiration(), null);
+    }
 
     public URLPair(String longUrl, String shortUrl) {
-        this(longUrl, shortUrl, getDefaultExpiration());
+        this(longUrl, shortUrl, getDefaultExpiration(), null);
     }
 
     private static Date getDefaultExpiration() {
@@ -29,4 +37,6 @@ public class URLPair {
         calendar.add(Calendar.DAY_OF_MONTH, 1);
         return calendar.getTime();
     }
+
+
 }

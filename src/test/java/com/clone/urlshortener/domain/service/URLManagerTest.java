@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.OptimisticLockingFailureException;
 
 import java.util.Optional;
 
@@ -47,6 +48,26 @@ class URLManagerTest {
         String result = urlManager.getShortUrl(longUrl);
         Assertions.assertThat(result).isEqualTo("/shorten-url/hello");
 
+        verify(urlPairRepository, times(2)).save(any(URLPair.class));
+    }
+
+    @Test
+    void getShortUrl_optimisticLockingFailure() {
+        String longUrl = "https://example.com";
+
+        // First call to findURLPairByLongUrl returns Optional.empty()
+        when(urlPairRepository.findURLPairByLongUrl(longUrl))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(new URLPair(longUrl, "/shorten-url/hello")));
+
+        // save method throws OptimisticLockingFailureException
+        doThrow(OptimisticLockingFailureException.class)
+                .when(urlPairRepository).save(any(URLPair.class));
+
+        String result = urlManager.getShortUrl(longUrl);
+        Assertions.assertThat(result).isEqualTo("/shorten-url/hello");
+
+        verify(urlPairRepository, times(2)).findURLPairByLongUrl(longUrl);
         verify(urlPairRepository).save(any(URLPair.class));
     }
 

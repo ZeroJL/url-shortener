@@ -3,15 +3,13 @@ package com.clone.urlshortener.domain.service;
 import com.clone.urlshortener.codec.CodecStrategy;
 import com.clone.urlshortener.codec.ShortUrlCodec;
 import com.clone.urlshortener.codec.exception.UnknownStrategyException;
-import com.clone.urlshortener.domain.exception.DuplicateShortUrlException;
 import com.clone.urlshortener.domain.exception.ShortUrlException;
 import com.clone.urlshortener.domain.exception.ShortUrlGenerationException;
 import com.clone.urlshortener.domain.model.URLPair;
 import com.clone.urlshortener.infrastructure.repository.mongo.URLPairRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,10 +23,10 @@ public class URLManager {
 
     public String getShortUrl(String longUrl) {
         try {
-            URLPair urlPair = urlPairRepository.findURLPairByLongUrl(longUrl).orElseGet(() -> generateAndSaveUrlPair(longUrl));
+            URLPair urlPair = urlPairRepository.findURLPairByLongUrl(longUrl).orElseGet(() -> generateAndSaveNewShortUrl(longUrl));
             return urlPair.getShortUrl();
-        } catch (DataAccessException dataAccessException) {
-            handleException("Database error when get short URL for: " + longUrl, dataAccessException);
+        } catch (OptimisticLockingFailureException e) {
+            return fetchExistingShortUrl(longUrl);
         } catch (ShortUrlException shortUrlException) {
             handleException("Error when get short URL for: " + longUrl, shortUrlException);
         } catch (Exception e) {
@@ -38,18 +36,25 @@ public class URLManager {
         throw new ShortUrlGenerationException("Failed to retrieve a short URL for: " + longUrl);
     }
 
-    private URLPair generateAndSaveUrlPair(String longUrl) {
+    private URLPair generateAndSaveNewShortUrl(String longUrl) {
+        URLPair placeHolder = createPlaceHolder(longUrl);
+
         String shortUrl = generateShortUrl();
-        URLPair urlPair = new URLPair(longUrl, shortUrl);
-        try {
-            urlPairRepository.save(urlPair);
-        } catch (DataIntegrityViolationException e) {
-            log.error("Duplicate long URL.", e);
-            throw new DuplicateShortUrlException("Duplicate long URL.", e);
-        }
+
+        placeHolder.setShortUrl(shortUrl);
+        urlPairRepository.save(placeHolder);
+
+        return placeHolder;
+    }
+
+    private URLPair createPlaceHolder(String longUrl) {
+        URLPair urlPair = new URLPair(longUrl);
+        urlPairRepository.save(urlPair);
 
         return urlPair;
     }
+
+
 
     private String generateShortUrl() {
         try {
@@ -63,5 +68,10 @@ public class URLManager {
     private void handleException(String message, Exception e) {
         log.error(message, e);
         throw new ShortUrlException(message, e);
+    }
+
+    private String fetchExistingShortUrl(String longUrl) {
+        return urlPairRepository.findURLPairByLongUrl(longUrl).orElseThrow(() ->
+                new ShortUrlGenerationException("Failed to retrieve a short URL for: " + longUrl)).getShortUrl();
     }
 }
