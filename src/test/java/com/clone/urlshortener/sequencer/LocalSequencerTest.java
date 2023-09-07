@@ -1,6 +1,5 @@
 package com.clone.urlshortener.sequencer;
 
-import com.clone.urlshortener.sequencer.LocalSequencer;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,17 +10,18 @@ import java.util.stream.Stream;
 
 class LocalSequencerTest {
     private final LocalSequencer localSequencer = new LocalSequencer();
+    private static final String SEQUENCE_NAME = "test_sequence";
 
     @BeforeEach
     void beforeEach() {
-        localSequencer.setSequencer(0L);
+        localSequencer.setSequence(SEQUENCE_NAME, 0L);
     }
 
     @ParameterizedTest
     @MethodSource("argumentsProvider")
     void getSequence(long base, long expect) {
-        localSequencer.setSequencer(base);
-        Assertions.assertThat(localSequencer.getSequence()).isEqualTo(expect);
+        localSequencer.setSequence(SEQUENCE_NAME, base);
+        Assertions.assertThat(localSequencer.getSequence(SEQUENCE_NAME)).isEqualTo(expect);
     }
 
     static Stream<Arguments> argumentsProvider() {
