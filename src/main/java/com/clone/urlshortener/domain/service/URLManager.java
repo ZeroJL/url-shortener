@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class URLManager {
 
     private final URLPairRepository urlPairRepository;
-    private final ShortUrlCodec shortUrlCodec;
+    private final KeyGeneration keyGeneration;
     private static final String PREFIX_URL = "/shorten-url/";
 
     public String getShortUrl(String longUrl) {
@@ -54,11 +54,9 @@ public class URLManager {
         return urlPair;
     }
 
-
-
     private String generateShortUrl() {
         try {
-            return PREFIX_URL + shortUrlCodec.encode(CodecStrategy.BASE_58);
+            return PREFIX_URL + keyGeneration.getKey();
         } catch (UnknownStrategyException e) {
             log.error("Generate fail because of unknown strategy", e);
             throw new ShortUrlGenerationException("Generate fail because of unknown strategy", e);

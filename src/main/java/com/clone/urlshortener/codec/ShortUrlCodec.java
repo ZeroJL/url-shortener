@@ -14,9 +14,8 @@ import java.util.Map;
 public class ShortUrlCodec {
 
     private final Map<String, CodecStrategy> codecStrategies;
-    private final Sequencer sequencer;
 
-    public String encode(String strategyName) {
+    public String encode(String strategyName, long baseNumber) {
         CodecStrategy codecStrategy = this.codecStrategies.get(strategyName);
 
         if (codecStrategy == null) {
@@ -25,7 +24,6 @@ public class ShortUrlCodec {
             throw new UnknownStrategyException(errorMessage);
         }
 
-        long sequence = sequencer.getSequence();
-        return codecStrategy.encode(sequence);
+        return codecStrategy.encode(baseNumber);
     }
 }

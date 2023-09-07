@@ -24,7 +24,7 @@ class URLManagerTest {
     @Mock
     private URLPairRepository urlPairRepository;
     @Mock
-    private ShortUrlCodec shortUrlCodec;
+    private KeyGeneration keyGeneration;
 
     @Test
     void getShortUrl_existingLongUrl() {
@@ -44,7 +44,7 @@ class URLManagerTest {
         String longUrl = "https://example.com";
 
         when(urlPairRepository.findURLPairByLongUrl(longUrl)).thenReturn(Optional.empty());
-        when(shortUrlCodec.encode(CodecStrategy.BASE_58)).thenReturn("hello");
+        when(keyGeneration.getKey()).thenReturn("hello");
         String result = urlManager.getShortUrl(longUrl);
         Assertions.assertThat(result).isEqualTo("/shorten-url/hello");
 
