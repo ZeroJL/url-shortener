@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface URLPairRepository extends MongoRepository<URLPair, String> {
     Optional<URLPair> findURLPairByLongUrl(String longUrl);
+
+    Optional<URLPair> findURLPairByShortUrl(String key);
 }

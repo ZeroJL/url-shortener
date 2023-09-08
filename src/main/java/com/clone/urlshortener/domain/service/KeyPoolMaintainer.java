@@ -16,7 +16,7 @@ import static com.clone.urlshortener.codec.CodecStrategy.BASE_58;
 
 @Service
 @RequiredArgsConstructor
-public class KeyGeneration {
+public class KeyPoolMaintainer {
 
     private static final int MIN_UNUSED_KEYS = 100;
 
@@ -32,6 +32,10 @@ public class KeyGeneration {
         usedKeyRepository.save(new UsedKey(unusedKey.getKey()));
 
         return unusedKey.getKey();
+    }
+
+    public boolean isUsedKey(String key) {
+        return usedKeyRepository.findById(key).isPresent();
     }
 
     public void generateAndSaveKey() {
@@ -50,7 +54,6 @@ public class KeyGeneration {
         return unusedKeyRepository.save(unusedKey);
     }
 
-    @Scheduled(fixedRate = 5 * 60 * 1000)
     public void maintainUnusedKeyPool() {
         long unusedKeyCount = unusedKeyRepository.count();
 

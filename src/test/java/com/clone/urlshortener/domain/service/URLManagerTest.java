@@ -1,8 +1,6 @@
 package com.clone.urlshortener.domain.service;
 
-import com.clone.urlshortener.codec.CodecStrategy;
 import com.clone.urlshortener.domain.model.URLPair;
-import com.clone.urlshortener.codec.ShortUrlCodec;
 import com.clone.urlshortener.infrastructure.repository.mongo.URLPairRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,7 +22,7 @@ class URLManagerTest {
     @Mock
     private URLPairRepository urlPairRepository;
     @Mock
-    private KeyGeneration keyGeneration;
+    private KeyManager keyManager;
 
     @Test
     void getShortUrl_existingLongUrl() {
@@ -44,7 +42,7 @@ class URLManagerTest {
         String longUrl = "https://example.com";
 
         when(urlPairRepository.findURLPairByLongUrl(longUrl)).thenReturn(Optional.empty());
-        when(keyGeneration.getKey()).thenReturn("hello");
+        when(keyManager.getKey()).thenReturn("hello");
         String result = urlManager.getShortUrl(longUrl);
         Assertions.assertThat(result).isEqualTo("/shorten-url/hello");
 

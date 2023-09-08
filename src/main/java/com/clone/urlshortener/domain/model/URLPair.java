@@ -16,7 +16,7 @@ import java.util.Date;
 @Document("collection = url_pair")
 public class URLPair {
 
-    @Id
+    @Id @Getter
     private String longUrl;
     @Getter @Setter
     private String shortUrl;

@@ -1,8 +1,7 @@
 package com.clone.urlshortener.domain.service;
 
-import com.clone.urlshortener.codec.CodecStrategy;
-import com.clone.urlshortener.codec.ShortUrlCodec;
 import com.clone.urlshortener.codec.exception.UnknownStrategyException;
+import com.clone.urlshortener.domain.exception.ExpiredShortUrlException;
 import com.clone.urlshortener.domain.exception.ShortUrlException;
 import com.clone.urlshortener.domain.exception.ShortUrlGenerationException;
 import com.clone.urlshortener.domain.model.URLPair;
@@ -12,13 +11,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class URLManager {
 
     private final URLPairRepository urlPairRepository;
-    private final KeyGeneration keyGeneration;
+    private final KeyManager keyManager;
     private static final String PREFIX_URL = "/shorten-url/";
 
     public String getShortUrl(String longUrl) {
@@ -56,7 +57,7 @@ public class URLManager {
 
     private String generateShortUrl() {
         try {
-            return PREFIX_URL + keyGeneration.getKey();
+            return PREFIX_URL + keyManager.getKey();
         } catch (UnknownStrategyException e) {
             log.error("Generate fail because of unknown strategy", e);
             throw new ShortUrlGenerationException("Generate fail because of unknown strategy", e);
@@ -71,5 +72,18 @@ public class URLManager {
     private String fetchExistingShortUrl(String longUrl) {
         return urlPairRepository.findURLPairByLongUrl(longUrl).orElseThrow(() ->
                 new ShortUrlGenerationException("Failed to retrieve a short URL for: " + longUrl)).getShortUrl();
+    }
+
+    public String getLongUrl(String shortUrl) {
+        Optional<URLPair> urlPair = urlPairRepository.findURLPairByShortUrl(shortUrl);
+        if (urlPair.isPresent()) {
+            return urlPair.get().getLongUrl();
+        }
+
+        if (keyManager.isUsedKey(shortUrl)) {
+            throw new ExpiredShortUrlException("Expired short URL: " + shortUrl);
+        }
+
+        throw new ShortUrlException("No such short URL exist: " + shortUrl);
     }
 }
