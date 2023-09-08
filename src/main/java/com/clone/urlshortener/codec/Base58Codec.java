@@ -2,7 +2,7 @@ package com.clone.urlshortener.codec;
 
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("Base58Codec")
 public class Base58Codec implements CodecStrategy {
     private static final String BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 

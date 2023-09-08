@@ -7,7 +7,6 @@ import com.clone.urlshortener.infrastructure.repository.mongo.UnusedKeyRepositor
 import com.clone.urlshortener.infrastructure.repository.mongo.UsedKeyRepository;
 import com.clone.urlshortener.sequencer.Sequencer;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +34,6 @@ public class KeyGeneration {
         return unusedKey.getKey();
     }
 
-    @Async
     public void generateAndSaveKey() {
         SecureRandom random = new SecureRandom();
         String generatedKey = shortUrlCodec.encode(BASE_58, random.nextLong());
