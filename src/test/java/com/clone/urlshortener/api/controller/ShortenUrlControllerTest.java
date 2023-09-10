@@ -1,6 +1,7 @@
 package com.clone.urlshortener.api.controller;
 
 import com.clone.urlshortener.api.controller.ShortenUrlController;
+import com.clone.urlshortener.domain.exception.ExpiredShortUrlException;
 import com.clone.urlshortener.domain.service.URLManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,26 @@ class ShortenUrlControllerTest {
                         .content(requestBody))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expect));
+    }
+
+    @Test
+    void redirectUrl_success() throws Exception {
+        String shortUrl = "hello";
+        when(urlManager.getLongUrl(shortUrl)).thenReturn("https://github.com/ZeroJL");
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/shorten-url/" + shortUrl))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("https://github.com/ZeroJL"));
+    }
+
+    @Test
+    void redirectUrl_fail() throws Exception {
+        String shortUrl = "hello";
+        when(urlManager.getLongUrl(shortUrl)).thenThrow(new ExpiredShortUrlException("Url Expired"));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/shorten-url/" + shortUrl))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/errorPage"));
     }
 
 }
