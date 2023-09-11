@@ -86,4 +86,8 @@ public class URLManager {
 
         throw new ShortUrlException("No such short URL exist: " + shortUrl);
     }
+
+    public URLPair deleteUrl(String shortUrl) {
+        return new URLPair("dummy", shortUrl);
+    }
 }

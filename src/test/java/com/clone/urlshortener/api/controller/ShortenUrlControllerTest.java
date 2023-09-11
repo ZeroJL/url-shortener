@@ -1,7 +1,7 @@
 package com.clone.urlshortener.api.controller;
 
-import com.clone.urlshortener.api.controller.ShortenUrlController;
 import com.clone.urlshortener.domain.exception.ExpiredShortUrlException;
+import com.clone.urlshortener.domain.model.URLPair;
 import com.clone.urlshortener.domain.service.URLManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,4 +61,15 @@ class ShortenUrlControllerTest {
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/errorPage"));
     }
 
+    @Test
+    void deleteShortUrl() throws Exception {
+        String shortUrl = "Hello";
+        String expect = "{\"longUrl\":\"https://github.com/ZeroJL\",\"shortUrl\":\"Hello\"}";
+
+        when(urlManager.deleteUrl(shortUrl)).thenReturn(new URLPair("https://github.com/ZeroJL", shortUrl));
+        mockMvc.perform(MockMvcRequestBuilders.delete("/shorten-url/" + shortUrl))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(expect));
+
+    }
 }
