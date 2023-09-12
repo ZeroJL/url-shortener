@@ -26,4 +26,12 @@ public class MongoSequencer implements Sequencer{
 
         return sequence.getSequence();
     }
+
+    public void cleanup(String sequenceName) {
+        mongoOperations.remove(
+                Query.query(where("_id").is(sequenceName)),
+                Sequence.class
+        );
+    }
+
 }

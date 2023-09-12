@@ -1,17 +1,10 @@
 package com.clone.urlshortener.sequencer;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.core.MongoOperations;
-
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,4 +29,10 @@ class MongoSequencerTest {
         Long sequence3 = mongoSequencer.getSequence(SEQUENCE_NAME);
         assertThat(sequence3).isEqualTo(3L);
     }
+
+    @BeforeEach
+    void cleanup() {
+        mongoSequencer.cleanup(SEQUENCE_NAME);
+    }
+
 }
