@@ -84,10 +84,12 @@ public class URLManager {
             throw new ExpiredShortUrlException("Expired short URL: " + shortUrl);
         }
 
-        throw new ShortUrlException("No such short URL exist: " + shortUrl);
+        throw new ShortUrlException("URLPair not found for shortUrl: " + shortUrl);
     }
 
     public URLPair deleteUrl(String shortUrl) {
-        return new URLPair("dummy", shortUrl);
+
+        return urlPairRepository.findAndRemoveByShortUrl(shortUrl)
+                .orElseThrow(() -> new ShortUrlException("URLPair not found for shortUrl: " + shortUrl));
     }
 }

@@ -1,5 +1,6 @@
 package com.clone.urlshortener.domain.service;
 
+import com.clone.urlshortener.domain.exception.ShortUrlException;
 import com.clone.urlshortener.domain.model.URLPair;
 import com.clone.urlshortener.infrastructure.repository.mongo.URLPairRepository;
 import org.assertj.core.api.Assertions;
@@ -12,6 +13,7 @@ import org.springframework.dao.OptimisticLockingFailureException;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,12 +55,10 @@ class URLManagerTest {
     void getShortUrl_optimisticLockingFailure() {
         String longUrl = "https://example.com";
 
-        // First call to findURLPairByLongUrl returns Optional.empty()
         when(urlPairRepository.findURLPairByLongUrl(longUrl))
                 .thenReturn(Optional.empty())
                 .thenReturn(Optional.of(new URLPair(longUrl, "/shorten-url/hello")));
 
-        // save method throws OptimisticLockingFailureException
         doThrow(OptimisticLockingFailureException.class)
                 .when(urlPairRepository).save(any(URLPair.class));
 
@@ -67,6 +67,32 @@ class URLManagerTest {
 
         verify(urlPairRepository, times(2)).findURLPairByLongUrl(longUrl);
         verify(urlPairRepository).save(any(URLPair.class));
+    }
+
+    @Test
+    void deleteShortUrl_existShortUrl() {
+        String shortUrl = "hello";
+        when(urlPairRepository.findAndRemoveByShortUrl(shortUrl))
+                .thenReturn(Optional.of(new URLPair("/shorten-url/hello", "hello")));
+
+        URLPair urlPair = urlManager.deleteUrl(shortUrl);
+
+        Assertions.assertThat(urlPair.getLongUrl()).isEqualTo("/shorten-url/hello");
+        Assertions.assertThat(urlPair.getShortUrl()).isEqualTo("hello");
+    }
+
+    @Test
+    void deleteShortUrl_newShortUrl() {
+        String shortUrl = "hello";
+        when(urlPairRepository.findAndRemoveByShortUrl(shortUrl))
+                .thenThrow(new ShortUrlException("URLPair not found for shortUrl: " + shortUrl));
+
+
+        Throwable thrown = catchThrowable(() -> urlManager.deleteUrl(shortUrl));
+        Assertions.assertThat(thrown)
+                .isInstanceOf(ShortUrlException.class)
+                .hasMessage("URLPair not found for shortUrl: " + shortUrl);
+
     }
 
 }
