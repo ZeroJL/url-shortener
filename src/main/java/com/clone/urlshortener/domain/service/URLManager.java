@@ -8,6 +8,8 @@ import com.clone.urlshortener.domain.model.URLPair;
 import com.clone.urlshortener.infrastructure.repository.mongo.URLPairRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +39,7 @@ public class URLManager {
         throw new ShortUrlGenerationException("Failed to retrieve a short URL for: " + longUrl);
     }
 
-    private URLPair generateAndSaveNewShortUrl(String longUrl) {
+    public URLPair generateAndSaveNewShortUrl(String longUrl) {
         URLPair placeHolder = createPlaceHolder(longUrl);
 
         String shortUrl = generateShortUrl();
@@ -74,6 +76,7 @@ public class URLManager {
                 new ShortUrlGenerationException("Failed to retrieve a short URL for: " + longUrl)).getShortUrl();
     }
 
+    @Cacheable(value = "urls", key = "#shortUrl")
     public String getLongUrl(String shortUrl) {
         Optional<URLPair> urlPair = urlPairRepository.findURLPairByShortUrl(shortUrl);
         if (urlPair.isPresent()) {
@@ -87,6 +90,7 @@ public class URLManager {
         throw new ShortUrlException("URLPair not found for shortUrl: " + shortUrl);
     }
 
+    @CacheEvict(value = "urls", key = "#shortUrl")
     public URLPair deleteUrl(String shortUrl) {
 
         return urlPairRepository.findAndRemoveByShortUrl(shortUrl)
