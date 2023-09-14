@@ -34,7 +34,7 @@ class ShortenUrlControllerTest {
 
         String expect = "{\"shortUrl\":\"hello\"}";
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/shorten-url")
+        mockMvc.perform(MockMvcRequestBuilders.post("/urls")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -46,7 +46,7 @@ class ShortenUrlControllerTest {
         String shortUrl = "hello";
         when(urlManager.getLongUrl(shortUrl)).thenReturn("https://github.com/ZeroJL");
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/shorten-url/" + shortUrl))
+        mockMvc.perform(MockMvcRequestBuilders.get("/urls/" + shortUrl))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("https://github.com/ZeroJL"));
     }
@@ -56,7 +56,7 @@ class ShortenUrlControllerTest {
         String shortUrl = "hello";
         when(urlManager.getLongUrl(shortUrl)).thenThrow(new ExpiredShortUrlException("Url Expired"));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/shorten-url/" + shortUrl))
+        mockMvc.perform(MockMvcRequestBuilders.get("/urls/" + shortUrl))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/errorPage"));
     }
@@ -67,7 +67,7 @@ class ShortenUrlControllerTest {
         String expect = "{\"longUrl\":\"https://github.com/ZeroJL\",\"shortUrl\":\"Hello\"}";
 
         when(urlManager.deleteUrl(shortUrl)).thenReturn(new URLPair("https://github.com/ZeroJL", shortUrl));
-        mockMvc.perform(MockMvcRequestBuilders.delete("/shorten-url/" + shortUrl))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/urls/" + shortUrl))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expect));
 

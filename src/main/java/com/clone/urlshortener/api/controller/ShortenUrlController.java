@@ -15,12 +15,12 @@ public class ShortenUrlController {
 
     private final URLManager urlManager;
 
-    @PostMapping("/shorten-url")
+    @PostMapping("/urls")
     public URLShortenResponse makeShortUrl(@RequestBody URLShortenRequest urlShortenRequest) {
         return new URLShortenResponse(urlManager.getShortUrl(urlShortenRequest.getLongUrl()));
     }
 
-    @GetMapping("/shorten-url/{key}")
+    @GetMapping("/urls/{key}")
     public RedirectView redirectUrl(@PathVariable String key) {
         try {
             return new RedirectView(urlManager.getLongUrl(key));
@@ -29,7 +29,7 @@ public class ShortenUrlController {
         }
     }
 
-    @DeleteMapping("/shorten-url/{key}")
+    @DeleteMapping("/urls/{key}")
     public URLDeleteResponse deleteShortUrl(@PathVariable String key) {
         URLPair urlPair = urlManager.deleteUrl(key);
         return new URLDeleteResponse(urlPair.getLongUrl(), urlPair.getShortUrl());
