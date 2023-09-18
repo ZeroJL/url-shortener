@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.generator.keygenerator.codec.CodecStrategy.BASE_58;
 
@@ -38,28 +40,27 @@ public class KeyPoolMaintainer {
         return usedKeyRepository.findById(key).isPresent();
     }
 
-    public void generateAndSaveKey() {
+    private String generateKey() {
         SecureRandom random = new SecureRandom();
         String generatedKey = shortUrlCodec.encode(BASE_58, random.nextLong());
 
         while (usedKeyRepository.existsById(generatedKey) || unusedKeyRepository.existsById(generatedKey)) {
             generatedKey = shortUrlCodec.encode(BASE_58, random.nextLong());
         }
-        saveNewKey(generatedKey);
-    }
 
-
-    private UnusedKey saveNewKey(String key) {
-        UnusedKey unusedKey = new UnusedKey(key, mongoSequencer.getSequence(UnusedKey.SEQUENCE_NAME));
-        return unusedKeyRepository.save(unusedKey);
+        return generatedKey;
     }
 
     public void maintainUnusedKeyPool() {
         long unusedKeyCount = unusedKeyRepository.count();
 
+        List<UnusedKey> unusedKeys = new ArrayList<>();
         while (unusedKeyCount < MIN_UNUSED_KEYS) {
-            generateAndSaveKey();
+            String key = generateKey();
+            unusedKeys.add(new UnusedKey(key, mongoSequencer.getSequence(UnusedKey.SEQUENCE_NAME)));
             unusedKeyCount++;
         }
+
+        unusedKeyRepository.saveAll(unusedKeys);
     }
 }
