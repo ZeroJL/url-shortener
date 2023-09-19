@@ -8,6 +8,7 @@ import com.generator.keygenerator.infrastructure.repository.mongo.UnusedKeyRepos
 import com.generator.keygenerator.infrastructure.repository.mongo.UsedKeyRepository;
 import com.generator.keygenerator.sequencer.Sequencer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -51,6 +52,7 @@ public class KeyPoolMaintainer {
         return generatedKey;
     }
 
+    @Scheduled(fixedRate = 5 * 60 * 1000)
     public void maintainUnusedKeyPool() {
         long unusedKeyCount = unusedKeyRepository.count();
 

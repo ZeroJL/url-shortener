@@ -18,7 +18,6 @@ public class KeyManager {
         return keyPoolMaintainer.isUsedKey(key);
     }
 
-    @Scheduled(fixedRate = 5 * 60 * 1000)
     public void maintainUnusedKeyPool() {
         keyPoolMaintainer.maintainUnusedKeyPool();
     }
