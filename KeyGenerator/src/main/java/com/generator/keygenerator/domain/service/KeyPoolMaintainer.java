@@ -2,6 +2,7 @@ package com.generator.keygenerator.domain.service;
 
 
 import com.generator.keygenerator.codec.ShortUrlCodec;
+import com.generator.keygenerator.domain.exception.NoAvailableKeysException;
 import com.generator.keygenerator.domain.model.UnusedKey;
 import com.generator.keygenerator.domain.model.UsedKey;
 import com.generator.keygenerator.infrastructure.repository.mongo.UnusedKeyRepository;
@@ -21,7 +22,7 @@ import static com.generator.keygenerator.codec.CodecStrategy.BASE_58;
 @RequiredArgsConstructor
 public class KeyPoolMaintainer {
 
-    private static final int MIN_UNUSED_KEYS = 100;
+    private static final int MIN_UNUSED_KEYS = 100000;
 
     private final UnusedKeyRepository unusedKeyRepository;
     private final UsedKeyRepository usedKeyRepository;
@@ -30,7 +31,7 @@ public class KeyPoolMaintainer {
 
     public String getKey() {
         UnusedKey unusedKey = unusedKeyRepository.findAndRemoveTopByOrderBySequenceIdAsc()
-                .orElseThrow(() -> new RuntimeException("No unused keys available"));
+                .orElseThrow(() -> new NoAvailableKeysException("No unused keys available"));
 
         usedKeyRepository.save(new UsedKey(unusedKey.getKey()));
 
@@ -52,7 +53,7 @@ public class KeyPoolMaintainer {
         return generatedKey;
     }
 
-    @Scheduled(fixedRate = 5 * 60 * 1000)
+    @Scheduled(fixedRate = 60 * 1000)
     public void maintainUnusedKeyPool() {
         long unusedKeyCount = unusedKeyRepository.count();
 

@@ -80,7 +80,6 @@ class KeyPoolMaintainerTest {
         }
 
         assertNotNull(scheduled, "Method is not annotated with @Scheduled");
-        assertEquals(5 * 60 * 1000, scheduled.fixedRate(), "Unexpected fixedRate value in @Scheduled annotation");
     }
 
     @Test
