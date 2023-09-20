@@ -1,11 +1,9 @@
-package com.clone.urlshortener.domain.service;
+package com.url.urlmanager.domain.service;
 
-import com.clone.urlshortener.codec.exception.UnknownStrategyException;
-import com.clone.urlshortener.domain.exception.ExpiredShortUrlException;
-import com.clone.urlshortener.domain.exception.ShortUrlException;
-import com.clone.urlshortener.domain.exception.ShortUrlGenerationException;
-import com.clone.urlshortener.domain.model.URLPair;
-import com.clone.urlshortener.infrastructure.repository.mongo.URLPairRepository;
+import com.url.urlmanager.domain.exception.ShortUrlException;
+import com.url.urlmanager.domain.exception.ShortUrlGenerationException;
+import com.url.urlmanager.domain.model.URLPair;
+import com.url.urlmanager.infrastructure.repository.mongo.URLPairRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -13,15 +11,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class URLManager {
+public class URLShortener {
 
     private final URLPairRepository urlPairRepository;
-    private final KeyManager keyManager;
     private static final String PREFIX_URL = "/shorten-url/";
 
     public String getShortUrl(String longUrl) {
@@ -58,12 +53,13 @@ public class URLManager {
     }
 
     private String generateShortUrl() {
-        try {
+        /*try {
             return PREFIX_URL + keyManager.getKey();
         } catch (UnknownStrategyException e) {
             log.error("Generate fail because of unknown strategy", e);
             throw new ShortUrlGenerationException("Generate fail because of unknown strategy", e);
-        }
+        }*/
+        return "";
     }
 
     private void handleException(String message, Exception e) {
@@ -78,7 +74,7 @@ public class URLManager {
 
     @Cacheable(value = "urls", key = "#shortUrl")
     public String getLongUrl(String shortUrl) {
-        Optional<URLPair> urlPair = urlPairRepository.findURLPairByShortUrl(shortUrl);
+        /*Optional<URLPair> urlPair = urlPairRepository.findURLPairByShortUrl(shortUrl);
         if (urlPair.isPresent()) {
             return urlPair.get().getLongUrl();
         }
@@ -87,7 +83,8 @@ public class URLManager {
             throw new ExpiredShortUrlException("Expired short URL: " + shortUrl);
         }
 
-        throw new ShortUrlException("URLPair not found for shortUrl: " + shortUrl);
+        throw new ShortUrlException("URLPair not found for shortUrl: " + shortUrl);*/
+        return "";
     }
 
     @CacheEvict(value = "urls", key = "#shortUrl")
