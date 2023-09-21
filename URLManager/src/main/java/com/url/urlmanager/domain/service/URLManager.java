@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class URLShortener {
+public class URLManager {
 
     private final URLPairRepository urlPairRepository;
     private static final String PREFIX_URL = "/shorten-url/";

@@ -19,10 +19,10 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class URLShortenerTest {
+class URLManagerTest {
 
     @InjectMocks
-    private URLShortener urlShortener;
+    private URLManager urlManager;
     @Mock
     private URLPairRepository urlPairRepository;
 
@@ -33,7 +33,7 @@ class URLShortenerTest {
 
         when(urlPairRepository.findURLPairByLongUrl(longUrl)).thenReturn(Optional.of(expect));
 
-        String result = urlShortener.getShortUrl(longUrl);
+        String result = urlManager.getShortUrl(longUrl);
         Assertions.assertThat(result).isEqualTo("exist");
 
         verify(urlPairRepository, never()).save(any());
@@ -62,7 +62,7 @@ class URLShortenerTest {
         doThrow(OptimisticLockingFailureException.class)
                 .when(urlPairRepository).save(any(URLPair.class));
 
-        String result = urlShortener.getShortUrl(longUrl);
+        String result = urlManager.getShortUrl(longUrl);
         Assertions.assertThat(result).isEqualTo("/shorten-url/hello");
 
         verify(urlPairRepository, times(2)).findURLPairByLongUrl(longUrl);
@@ -75,7 +75,7 @@ class URLShortenerTest {
         when(urlPairRepository.findAndRemoveByShortUrl(shortUrl))
                 .thenReturn(Optional.of(new URLPair("/shorten-url/hello", "hello")));
 
-        URLPair urlPair = urlShortener.deleteUrl(shortUrl);
+        URLPair urlPair = urlManager.deleteUrl(shortUrl);
 
         Assertions.assertThat(urlPair.getLongUrl()).isEqualTo("/shorten-url/hello");
         Assertions.assertThat(urlPair.getShortUrl()).isEqualTo("hello");
@@ -88,7 +88,7 @@ class URLShortenerTest {
                 .thenThrow(new ShortUrlException("URLPair not found for shortUrl: " + shortUrl));
 
 
-        Throwable thrown = catchThrowable(() -> urlShortener.deleteUrl(shortUrl));
+        Throwable thrown = catchThrowable(() -> urlManager.deleteUrl(shortUrl));
         Assertions.assertThat(thrown)
                 .isInstanceOf(ShortUrlException.class)
                 .hasMessage("URLPair not found for shortUrl: " + shortUrl);
