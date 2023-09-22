@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.15'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id "com.google.protobuf" version "0.8.17"
 }
 
 group = 'com.clone'
@@ -24,6 +25,7 @@ repositories {
 
 allprojects {
     apply plugin: 'java'
+    apply plugin: 'com.google.protobuf'
 
     repositories {
         mavenCentral()
@@ -32,11 +34,36 @@ allprojects {
     dependencies {
         implementation 'org.projectlombok:lombok'
         implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter'
+
         implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+        implementation 'io.grpc:grpc-netty-shaded'
+        implementation 'io.grpc:grpc-protobuf'
+        implementation 'io.grpc:grpc-stub'
+        implementation 'com.google.protobuf:protobuf-java'
+        implementation 'net.devh.boot:grpc-server-spring-boot-starter'
+        implementation 'net.devh.boot:grpc-client-spring-boot-starter'
 
         annotationProcessor 'org.projectlombok:lombok'
 
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+    protobuf {
+        protoc {
+            artifact = 'com.google.protobuf:protoc:3.17.3'
+        }
+        plugins {
+            grpc {
+                artifact = 'io.grpc:protoc-gen-grpc-java:1.40.1'
+            }
+        }
+        generateProtoTasks {
+            all()*.plugins {
+                grpc {}
+            }
+        }
     }
 }
 
@@ -44,3 +71,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
