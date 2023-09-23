@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package keymanager;
+
+message KeyRequest {
+
+}
+
+message KeyResponse {
+  string key = 1;
+}
+
+service KeyManagerService {
+  rpc GenerateKey(KeyRequest) returns (KeyResponse);
+}

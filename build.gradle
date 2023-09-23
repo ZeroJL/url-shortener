@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.15'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-    id "com.google.protobuf" version "0.8.17"
 }
 
 group = 'com.clone'
@@ -25,7 +24,6 @@ repositories {
 
 allprojects {
     apply plugin: 'java'
-    apply plugin: 'com.google.protobuf'
 
     repositories {
         mavenCentral()
@@ -50,21 +48,7 @@ allprojects {
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
     }
 
-    protobuf {
-        protoc {
-            artifact = 'com.google.protobuf:protoc:3.17.3'
-        }
-        plugins {
-            grpc {
-                artifact = 'io.grpc:protoc-gen-grpc-java:1.40.1'
-            }
-        }
-        generateProtoTasks {
-            all()*.plugins {
-                grpc {}
-            }
-        }
-    }
+
 }
 
 tasks.named('test') {
