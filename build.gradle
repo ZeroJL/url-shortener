@@ -36,12 +36,7 @@ allprojects {
 
         implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
-        implementation 'io.grpc:grpc-netty-shaded'
-        implementation 'io.grpc:grpc-protobuf'
-        implementation 'io.grpc:grpc-stub'
-        implementation 'com.google.protobuf:protobuf-java'
-        implementation 'net.devh.boot:grpc-server-spring-boot-starter'
-        implementation 'net.devh.boot:grpc-client-spring-boot-starter'
+        implementation 'net.devh:grpc-spring-boot-starter'
 
         annotationProcessor 'org.projectlombok:lombok'
 
