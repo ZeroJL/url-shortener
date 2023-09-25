@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.15'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-    id "com.google.protobuf" version "0.8.17"
+    //id "com.google.protobuf" version "0.8.17"
 }
 
 group = 'com.generator'
@@ -17,6 +17,9 @@ repositories {
 }
 
 dependencies {
+    implementation project(':Proto')
+    implementation 'org.springframework.boot:spring-boot-starter'
+    //implementation 'io.grpc:grpc-spring-boot-starter:2.12.0.RELEASE'
 }
 
 tasks.named('test') {
