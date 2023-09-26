@@ -2,4 +2,3 @@ rootProject.name = 'url-shortener'
 include ':URLManager'
 include ':KeyGenerator'
 include ':Proto'
-
