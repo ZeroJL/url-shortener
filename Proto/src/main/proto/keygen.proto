@@ -4,14 +4,12 @@ option java_multiple_files = true;
 
 package keymanager;
 
-message KeyRequest {
-
-}
+message KeyRequest {}
 
 message KeyResponse {
   string key = 1;
 }
 
-service KeyManagerService {
+service KeyGeneratorService {
   rpc GenerateKey(KeyRequest) returns (KeyResponse);
 }
