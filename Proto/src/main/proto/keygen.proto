@@ -10,6 +10,16 @@ message KeyResponse {
   string key = 1;
 }
 
+message IsUsedKeyRequest {
+  string shortUrlKey = 1;
+}
+
+message IsUsedKeyResponse {
+  bool isUsed = 1;
+}
+
 service KeyGeneratorService {
   rpc GenerateKey(KeyRequest) returns (KeyResponse);
+  rpc IsUsedKey(IsUsedKeyRequest) returns (IsUsedKeyResponse);
+
 }

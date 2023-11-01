@@ -1,9 +1,7 @@
 package com.generator.keygenerator.grpc;
 
 import io.grpc.stub.StreamObserver;
-import keymanager.KeyGeneratorServiceGrpc;
-import keymanager.KeyRequest;
-import keymanager.KeyResponse;
+import keymanager.*;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 @GrpcService
@@ -14,6 +12,18 @@ public class KeyGeneratorServiceImpl extends KeyGeneratorServiceGrpc.KeyGenerato
         KeyResponse response = KeyResponse.newBuilder().setKey(generatedKey).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
+    }
+
+    @Override
+    public void isUsedKey(IsUsedKeyRequest request, StreamObserver<IsUsedKeyResponse> responseObserver) {
+        boolean isUsed = checkIfKeyIsUsed(request.getShortUrlKey());
+        IsUsedKeyResponse response = IsUsedKeyResponse.newBuilder().setIsUsed(isUsed).build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    private boolean checkIfKeyIsUsed(String key) {
+        return true;
     }
 
     private String generateUniqueKey() {

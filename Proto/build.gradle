@@ -6,6 +6,12 @@ plugins {
 
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+
 group 'com.clone'
 version '0.0.1-SNAPSHOT'
 
@@ -15,16 +21,26 @@ repositories {
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.22.2'
+        if (project.hasProperty('protoc_platform')) {
+            artifact = "com.google.protobuf:protoc:3.22.2:osx-x86_64"
+        } else {
+            artifact = "com.google.protobuf:protoc:3.22.2"
+        }
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.53.0'
+            if (project.hasProperty('protoc_platform')) {
+                artifact = "io.grpc:protoc-gen-grpc-java:1.53.0:osx-x86_64"
+            } else {
+                artifact = "io.grpc:protoc-gen-grpc-java:1.53.0"
+            }
         }
     }
     generateProtoTasks {
-        all()*.plugins {
-            grpc {}
+        all().each { task ->
+            task.plugins {
+                grpc { }
+            }
         }
     }
 }

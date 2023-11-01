@@ -1,8 +1,6 @@
 package com.url.urlmanager.grpc.client;
 
-import keymanager.KeyGeneratorServiceGrpc;
-import keymanager.KeyRequest;
-import keymanager.KeyResponse;
+import keymanager.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,5 +14,11 @@ public class KeyGeneratorClient {
         KeyRequest request = KeyRequest.newBuilder().build();
         KeyResponse response = keyGeneratorServiceBlockingStub.generateKey(request);
         return response.getKey();
+    }
+
+    public boolean isUsedKey(String shortUrlKey) {
+        IsUsedKeyRequest request = IsUsedKeyRequest.newBuilder().setShortUrlKey(shortUrlKey).build();
+        IsUsedKeyResponse response = keyGeneratorServiceBlockingStub.isUsedKey(request);
+        return response.getIsUsed();
     }
 }
