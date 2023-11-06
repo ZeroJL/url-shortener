@@ -1,17 +1,32 @@
 package com.generator.keygenerator.grpc;
 
+import com.generator.keygenerator.domain.service.KeyManager;
 import io.grpc.stub.StreamObserver;
 import keymanager.*;
+import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 @GrpcService
+@RequiredArgsConstructor
 public class KeyGeneratorServiceImpl extends KeyGeneratorServiceGrpc.KeyGeneratorServiceImplBase {
+
+    private final KeyManager keyManager;
+
     @Override
     public void generateKey(KeyRequest request, StreamObserver<KeyResponse> responseObserver) {
-        String generatedKey = generateUniqueKey();
-        KeyResponse response = KeyResponse.newBuilder().setKey(generatedKey).build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+
+        try {
+            String generatedKey = generateUniqueKey();
+            KeyResponse response = KeyResponse.newBuilder().setKey(generatedKey).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(e);
+        }
+    }
+
+    private String generateUniqueKey() {
+        return keyManager.getKey();
     }
 
     @Override
@@ -23,10 +38,8 @@ public class KeyGeneratorServiceImpl extends KeyGeneratorServiceGrpc.KeyGenerato
     }
 
     private boolean checkIfKeyIsUsed(String key) {
-        return true;
+        return keyManager.isUsedKey(key);
     }
 
-    private String generateUniqueKey() {
-        return "uniqueKey";
-    }
+
 }

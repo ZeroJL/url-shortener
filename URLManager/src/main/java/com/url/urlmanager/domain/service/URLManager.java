@@ -74,7 +74,7 @@ public class URLManager {
                 default:
                     log.error("gRPC call failed", e);
             }
-            throw new ShortUrlGenerationException("Failed to generate short URL due to gRPC error", e);
+            throw new ShortUrlGenerationException("Failed to generate short URL due to gRPC error" + status.getCode(), e);
         } catch (Exception e) {
             log.error("Failed to generate short URL", e);
             throw new ShortUrlGenerationException("Failed to generate short URL", e);
